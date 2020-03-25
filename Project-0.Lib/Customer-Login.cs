@@ -27,6 +27,7 @@ namespace Store
 
             var customerID = from sales in ctx.Customer
                              orderby sales.CustomerId
+                             where sales.UserName == userName
                              select sales.CustomerId;
 
             Customer cust = ctx.Customer.Where(c => c.UserName == userName).SingleOrDefault();

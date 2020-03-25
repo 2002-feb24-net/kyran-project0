@@ -41,7 +41,7 @@ namespace Store
 
             else
             {
-                Console.WriteLine("invalid Input!\n\nCustomer not Found!\n\n");
+                Console.WriteLine("\ninvalid Entry! or Customer not Found!\n\n");
                 Thread.Sleep(1000);
                 promptUser.promtUserMenu(ctx);
             }

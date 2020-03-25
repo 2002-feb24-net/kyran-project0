@@ -33,6 +33,22 @@ namespace Store
                     //Dont allow purchase until confirmation that they are registered with us.
                     promptUser.promtUserMenu(ctx);
             }
+            else if(choice == "")
+            {
+                Console.WriteLine("You Must Enter something !\n");
+                Thread.Sleep(800);
+                Console.WriteLine("Please Login or Create a new account!\n");
+                //Dont allow purchase until confirmation that they are registered with us.
+                promptUser.promtUserMenu(ctx);
+            }
+            else
+            {
+                Console.WriteLine("Invalid Entry!\n");
+                Thread.Sleep(800);
+                Console.WriteLine("Please Login or Create a new account!\n");
+                //Dont allow purchase until confirmation that they are registered with us.
+                promptUser.promtUserMenu(ctx);
+            }
 
             int nums = 1;
             string parenth = ")";
