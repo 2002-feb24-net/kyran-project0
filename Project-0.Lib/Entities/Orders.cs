@@ -1,0 +1,17 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace Project_0.Lib.Entities
+{
+    public partial class Orders
+    {
+        public int OrderId { get; set; }
+        public int StoreId { get; set; }
+        public int CustomerId { get; set; }
+        public DateTime Time { get; set; }
+        public decimal? Checkout { get; set; }
+
+        public virtual Customer Customer { get; set; }
+        public virtual Locations Store { get; set; }
+    }
+}
