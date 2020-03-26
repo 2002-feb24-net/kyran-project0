@@ -5,23 +5,20 @@ using Project_0.Lib.Entities;
 using System.Threading;
 using System.Collections.Generic;
 using Microsoft.Data.SqlClient;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Store
 {
     class placeOrders : IGameList
     {
-        public static void buyGame(Game_RealmContext ctx)
+        public static void buyGame(Game_RealmContext ctx, Customer cust, Locations loc)
         {
-
-
+           
            
             var choice = Console.ReadLine();
 
             if (choice.ToUpper() == "Y")
             {
-                CustStorage.custLogin(ctx);
-
+                cust = CustStorage.custLogin(ctx, cust);
 
             }
 
@@ -31,7 +28,7 @@ namespace Store
                 Thread.Sleep(800);
                 Console.WriteLine("Please Login or Create a new account!\n");
                     //Dont allow purchase until confirmation that they are registered with us.
-                    promptUser.promtUserMenu(ctx);
+                    promptUser.promtUserMenu(ctx, cust);
             }
             else if(choice == "")
             {
@@ -39,7 +36,7 @@ namespace Store
                 Thread.Sleep(800);
                 Console.WriteLine("Please Login or Create a new account!\n");
                 //Dont allow purchase until confirmation that they are registered with us.
-                promptUser.promtUserMenu(ctx);
+                promptUser.promtUserMenu(ctx, cust);
             }
             else
             {
@@ -47,64 +44,66 @@ namespace Store
                 Thread.Sleep(800);
                 Console.WriteLine("Please Login or Create a new account!\n");
                 //Dont allow purchase until confirmation that they are registered with us.
-                promptUser.promtUserMenu(ctx);
+                promptUser.promtUserMenu(ctx, cust);
             }
 
-            int nums = 1;
+            
             string parenth = ")";
 
             Console.WriteLine("Which store location would you like to purchase your game from?\n");
             Thread.Sleep(800);
-
+            Console.WriteLine("Choose by StoreID: ");
             List<Locations> locations_list = ctx.Locations.ToList();
 
 
             foreach (var item in locations_list)
             {
-                Console.WriteLine(nums + parenth + " Store Name: " + item.StoreName + "\nStreet: " + item.Street + "\nCity: " + item.City + "\nState: " + item.State + "\n\n");
-                nums++;
+                Console.WriteLine("StoreID: " + item.StoreId + " Store Name: " + item.StoreName + "\nStreet: " + item.Street + "\nCity: " + item.City + "\nState: " + item.State + "\n\n");
+              
             }
 
             
             int uInput = int.Parse(Console.ReadLine());
             /*var storeID = ctx.Locations.FirstOrDefault(sid => sid.StoreId == uInput);*/
+            loc = ctx.Locations.SingleOrDefault(c => c.StoreId == uInput);
 
+            
+                switch (uInput)
+                {
+                    case 1:
+                        Console.WriteLine("\n");
+                        Console.WriteLine("Your store: Long Beach, Ca\n");
+                        Thread.Sleep(700);
+                        break;
 
+                    case 4:
+                        Console.WriteLine("\n");
+                        Console.WriteLine("Your store: Miami, Fl\n");
+                        Thread.Sleep(700);
+                        break;
 
-            switch (uInput)
-            {
-                case 1:
-                    Console.WriteLine("\n");
-                    Console.WriteLine("Your store: Long Beach, Ca\n");
-                    Thread.Sleep(700);
-                    break;
+                    case 5:
+                        Console.WriteLine("\n");
+                        Console.WriteLine("Your store: New York, Ny\n");
+                        Thread.Sleep(700);
+                        break;
 
-                case 2:
-                    Console.WriteLine("\n");
-                    Console.WriteLine("Your store: Miami, Fl\n");
-                    Thread.Sleep(700);
-                    break;
+                    case 6:
+                        Console.WriteLine("\n");
+                        Console.WriteLine("Your store: Dallas, Tx\n");
+                        Thread.Sleep(700);
+                        break;
 
-                case 3:
-                    Console.WriteLine("\n");
-                    Console.WriteLine("Your store: New York, Ny\n");
-                    Thread.Sleep(700);
-                    break;
-
-                case 4:
-                    Console.WriteLine("\n");
-                    Console.WriteLine("Your store: Dallas, Tx\n");
-                    Thread.Sleep(700);
-                    break;
-
-                default:
-                    Console.WriteLine("\n");
-                    Console.WriteLine("Incorrect input, you must choose a store location!\n\n");
-                    Thread.Sleep(700);
-                    Console.WriteLine("Are you a registered customer? (y/n)");
-                    buyGame(ctx);
-                    break;
-            }
+                    default:
+                        Console.WriteLine("\n");
+                        Console.WriteLine("Incorrect input, you must choose a store location!\n\n");
+                        Thread.Sleep(700);
+                        Console.WriteLine("Are you a registered customer? (y/n)");
+                        buyGame(ctx, cust, loc);
+                        break;
+                }
+            
+           
 
             List<Games> orderTotal = new List<Games>();
 
@@ -117,7 +116,12 @@ namespace Store
             int gameChoice = int.Parse(Console.ReadLine());
             Console.WriteLine("\n");
 
+
+         
+
+            
             var gameID = ctx.Games.FirstOrDefault(gChoice => gChoice.ProductId == gameChoice);
+            /*var custID = ctx.Customer.FirstOrDefault(c => c.CustomerId );*/
 
 
             if (gameID != null)
@@ -149,9 +153,9 @@ namespace Store
                     Console.WriteLine("\nadd another game to your cart? (y/n)");
                     string answer2 = Console.ReadLine();
                     if (answer2.ToUpper() == "N")
-                    {   
+                    {
 
-                        return;
+                        break;
                     }
                     
                 }
@@ -168,20 +172,37 @@ namespace Store
                 var uChoice = Console.ReadLine();
 
 
+
+
                 if (uChoice.ToUpper() == "Y")
                 {
                     DateTime orederTime = DateTime.Now;
                     Orders order = new Orders()
                     {
-                        /*StoreId = ctx.Locations.Find(storeID) ,
-                        CustomerId = id,*/
+                        StoreId = loc.StoreId,
+                        CustomerId = cust.CustomerId,
                         Checkout = gameID.Price,
                         Time = DateTime.Now
                     };
                     ctx.Orders.Add(order);
                     ctx.SaveChanges();
 
-                    Console.WriteLine("Thank you for your purchase!");
+                    Console.WriteLine("Thank you for your purchase!\n");
+                    Thread.Sleep(1000);
+
+                    Console.WriteLine("Here is your order summary: \n");
+                    foreach(var item in orderTotal)
+                    {
+                        Console.WriteLine($"Game: {item.Title}\nPrice: ${item.Price} \n");
+                    }
+
+                    Console.Write("Your total comes out to: " );
+
+                    foreach (var item in orderTotal)
+                    {
+                        /*item.Price*/
+                    }
+
                 }
 
 
@@ -200,13 +221,13 @@ namespace Store
                     {
                         case 1:
                             Console.WriteLine("\n");
-                            promptUser.promtUserMenu(ctx);
+                            promptUser.promtUserMenu(ctx, cust);
                             Thread.Sleep(600);
                             break;
 
                         case 2:
                             Console.WriteLine("\n");
-                            placeOrders.buyGame(ctx);
+                            placeOrders.buyGame(ctx, cust, loc);
                             Thread.Sleep(600);
                             break;
                     }
@@ -220,11 +241,11 @@ namespace Store
             {
                 Console.WriteLine("Invalid GameID! Please choose The proper GameID from the list of Games Shown.");
                 Console.WriteLine("Are you a registered customer? (y/n)");
-                placeOrders.buyGame(ctx);
+                placeOrders.buyGame(ctx, cust, loc);
             }
 
 
-
+            return;
 
 
         }

@@ -9,7 +9,7 @@ namespace Store
 {
     class CustLookUp
     {
-        public static void customerSearch(Game_RealmContext ctx)
+        public static void customerSearch(Game_RealmContext ctx, Customer cust)
         {
             Console.WriteLine("Who would you like you like to search for? \n");
             Thread.Sleep(800);
@@ -43,7 +43,7 @@ namespace Store
             {
                 Console.WriteLine("\ninvalid Entry! or Customer not Found!\n\n");
                 Thread.Sleep(1000);
-                promptUser.promtUserMenu(ctx);
+                promptUser.promtUserMenu(ctx, cust);
             }
         }
 

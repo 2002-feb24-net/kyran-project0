@@ -9,8 +9,10 @@ namespace Store
     public static class promptUser
     {
 
-        public static void promtUserMenu(Game_RealmContext ctx)
+        public static Customer promtUserMenu(Game_RealmContext ctx, Customer cust)
         {
+            
+            var loc = new Locations();
 
             Console.WriteLine("What would you like to do? \n");
             Thread.Sleep(800);
@@ -27,15 +29,15 @@ namespace Store
                     StoreCustomer.addCustomer(ctx);
                     Thread.Sleep(600);
                     Console.WriteLine("\n\n");
-                    promtUserMenu(ctx);
+                    promtUserMenu(ctx, cust);
                     break;
 
                     case 2:
                     Console.WriteLine("\n");
-                    CustLookUp.customerSearch(ctx);
+                    CustLookUp.customerSearch(ctx, cust);
                     Thread.Sleep(600);
                     Console.WriteLine("\n\n");
-                    promtUserMenu(ctx);
+                    promtUserMenu(ctx, cust);
                     break;
 
                     case 3:
@@ -43,16 +45,16 @@ namespace Store
                     storeLocation.showLocation(ctx);
                     Thread.Sleep(600);
                     Console.WriteLine("\n\n");
-                    promtUserMenu(ctx);
+                    promtUserMenu(ctx, cust);
                     break;
 
                     case 4:
                     Console.WriteLine("\n");
                     Console.WriteLine("Are you a registered customer? (y/n)");
-                    placeOrders.buyGame(ctx);
+                    placeOrders.buyGame(ctx, cust, loc);
                     Thread.Sleep(600);
                     Console.WriteLine("\n\n");
-                    promtUserMenu(ctx);
+                    promtUserMenu(ctx, cust);
                     break;
 
                     case 5:
@@ -60,7 +62,7 @@ namespace Store
                     Console.WriteLine("\n");
                     listOfGames.gameInventory();
                     Console.WriteLine("\n\n");
-                    promtUserMenu(ctx);
+                    promtUserMenu(ctx, cust);
                     break;
 
                     case 6:
@@ -69,16 +71,16 @@ namespace Store
 
                 case 7:
                     ProductInventory.storeInventory();
-                    promptUser.promtUserMenu(ctx);
+                    promptUser.promtUserMenu(ctx, cust);
                     break;
 
                     default:
                     Console.WriteLine("\n");
                     Console.WriteLine("You must choose an option from the list!");
-                        promtUserMenu(ctx);
+                        promtUserMenu(ctx, cust);
                         break;
                 }
-            
+            return cust;
         }
 
     }

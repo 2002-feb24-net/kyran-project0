@@ -11,9 +11,9 @@ namespace Store
     {
         private static readonly int userInput = int.Parse(Console.ReadLine());
 
-        public static Customer custLogin(Game_RealmContext ctx)
+        public static Customer custLogin(Game_RealmContext ctx, Customer cust)
         {
-
+            
 
 
             Console.WriteLine("Please Enter your credentials\n\n");
@@ -25,13 +25,12 @@ namespace Store
 
 
 
-            var customerID = from sales in ctx.Customer
-                             orderby sales.CustomerId
-                             where sales.UserName == userName
-                             select sales.CustomerId;
+            var customer = from sales in ctx.Customer            
+                             where sales.UserName == userName && sales.Password == custPass
+                             select sales;
 
-            Customer cust = ctx.Customer.Where(c => c.UserName == userName).SingleOrDefault();
-            Customer pass = ctx.Customer.Where(c => c.Password == custPass).SingleOrDefault();
+             cust = ctx.Customer.Where(c => c.UserName == userName && c.Password == custPass).SingleOrDefault();
+            
             /* Customer custID = ctx.Customer.Where(cid => cid.CustomerId == customerID).SingleOrDefault();*/
             if (cust.UserName.ToUpper() != null)
             {
@@ -50,11 +49,11 @@ namespace Store
 
                 if (answer.ToUpper() == "Y")
                 {
-                    custLogin(ctx);
+                    custLogin(ctx, cust);
                 }
                 else
                 {
-                    promptUser.promtUserMenu(ctx);
+                    promptUser.promtUserMenu(ctx, cust);
                 }
             }
 
