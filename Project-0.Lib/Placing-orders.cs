@@ -71,13 +71,31 @@ namespace Store
                 Console.WriteLine("StoreID: " + item.StoreId + " Store Name: " + item.StoreName + "\nStreet: " + item.Street + "\nCity: " + item.City + "\nState: " + item.State + "\n\n");
               
             }
-            
-            
-            
 
-            int uInput = int.Parse(Console.ReadLine());
 
-           
+
+
+            int uInput = 0;
+            while (true)
+            {
+                try
+                {
+                   uInput = int.Parse(Console.ReadLine());
+                    if(ctx.Locations.Find(uInput) != null)
+                    break; 
+                    else
+                    {
+                        Console.WriteLine("You Must Enter the correct Store ID: ");
+                    }
+                }
+                catch (Exception)
+                {
+
+                    Console.WriteLine("incorrect input, enter valid location ID!");
+
+
+                }
+            }
 
             Orders newOrder = new Orders();
             newOrder.Checkout = 0;
