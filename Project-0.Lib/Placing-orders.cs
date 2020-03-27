@@ -294,7 +294,7 @@ namespace Store
                     }
 
                     ctx.Entry(newOrder).Reload();
-                    Console.Write("Your total comes out to: " + newOrder.Checkout);
+                    Console.Write("Your total comes out to: $" + newOrder.Checkout);
 
                     
 

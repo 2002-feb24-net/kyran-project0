@@ -4,6 +4,7 @@ using System.Linq;
 using Project_0.Lib.Entities;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
 
 namespace Store
 {
@@ -18,7 +19,8 @@ namespace Store
             var custSearch = from sales in ctx.Customer
                              where sales.FirstName == userINput
                              select sales;
-
+            /*var custOrderHistory = ctx.Orders.Include("Orders").ToList();*/
+           
             var custName = ctx.Customer.FirstOrDefault(cid => cid.FirstName == userINput);
 
             if (custName != null)
@@ -33,9 +35,18 @@ namespace Store
                     Console.WriteLine("\t\t\t\t\tCustomer Found!");
                     Console.WriteLine("\n");
                     Console.WriteLine($"First Name: {item.FirstName}\nLast Name: {item.LastName}\n\nUser Name:  {item.UserName}");
+                    var orderHist = ctx.Orders.Where(order => order.CustomerId == item.CustomerId).Include("Orderline").ToList();
 
+                    foreach (var item2 in orderHist)
+                    {
+                        foreach (var item3 in item2.Orderline)
+                        {
+                            Console.WriteLine($"OrderID: {item3.OrderId}\tProductID: {item3.ProductId}\tQuantity: {item3.Quantity}\tPurchase Date: {item3.Order.Time}");
+                        }
+                    }
                 }
 
+             
 
             }
 

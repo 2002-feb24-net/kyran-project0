@@ -27,7 +27,7 @@ namespace Project_0.Lib.Entities
             if (!optionsBuilder.IsConfigured)
             {
 
-                optionsBuilder.UseSqlServer("Server=tcp:net-trainning-bryant-kb.database.windows.net,1433;Initial Catalog=Game_Realm;Persist Security Info=False;User ID=kbryant;Password=Shukyduck94!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
+                optionsBuilder.UseSqlServer("Server=tcp:net-trainning-bryant-kb.database.windows.net,1433;Initial Catalog=Game_Realm;Persist Security Info=False;User ID=kbryant;Password=Shukyduck94!;MultipleActiveResultSets=true;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
             }
         }
 
