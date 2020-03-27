@@ -10,11 +10,21 @@ namespace Store
 {
     class placeOrders : IGameList
     {
-        public static void buyGame(Game_RealmContext ctx, Customer cust, Locations loc)
+        public static Customer buyGame(Game_RealmContext ctx, Customer cust, Locations loc)
         {
            
            
-            var choice = Console.ReadLine();
+            var choice = "";
+
+            try
+            {
+                choice = Console.ReadLine();
+            }
+            catch (Exception)
+            {
+
+                Console.WriteLine("");
+            }
 
             if (choice.ToUpper() == "Y")
             {
@@ -48,7 +58,7 @@ namespace Store
             }
 
             
-            string parenth = ")";
+            
 
             Console.WriteLine("Which store location would you like to purchase your game from?\n");
             Thread.Sleep(800);
@@ -61,9 +71,28 @@ namespace Store
                 Console.WriteLine("StoreID: " + item.StoreId + " Store Name: " + item.StoreName + "\nStreet: " + item.Street + "\nCity: " + item.City + "\nState: " + item.State + "\n\n");
               
             }
-
             
+            
+            
+
             int uInput = int.Parse(Console.ReadLine());
+
+           
+
+            Orders newOrder = new Orders();
+            newOrder.Checkout = 0;
+            newOrder.StoreId = uInput;
+            newOrder.CustomerId = cust.CustomerId;
+            newOrder.Time = DateTime.Now;
+            ctx.Orders.Add(newOrder);
+            ctx.SaveChanges();
+            ctx.Entry(newOrder).Reload();
+
+
+            int nID = newOrder.OrderId;
+            
+
+
             /*var storeID = ctx.Locations.FirstOrDefault(sid => sid.StoreId == uInput);*/
             loc = ctx.Locations.SingleOrDefault(c => c.StoreId == uInput);
 
@@ -106,6 +135,8 @@ namespace Store
            
 
             List<Games> orderTotal = new List<Games>();
+            List<Orders> finalCost = new List<Orders>();
+            
 
             var showInventory = new placeOrders();
             Console.WriteLine("Choose a game that you would you like to buy, based on GameID: \n\n");
@@ -113,15 +144,24 @@ namespace Store
             showInventory.gameInventory();
             Thread.Sleep(800);
             Console.WriteLine("Choose GameID: ");
-            int gameChoice = int.Parse(Console.ReadLine());
+            int gameChoice = 0;
             Console.WriteLine("\n");
 
+            try
+            {
+                gameChoice = int.Parse(Console.ReadLine());
+            }
+            catch (Exception)
+            {
+
+                Console.WriteLine("You Must Enter Some Data!");
+            }
 
          
 
-            
+            /*var orderHist = ctx.Orderline*/
             var gameID = ctx.Games.FirstOrDefault(gChoice => gChoice.ProductId == gameChoice);
-            /*var custID = ctx.Customer.FirstOrDefault(c => c.CustomerId );*/
+            
 
 
             if (gameID != null)
@@ -130,14 +170,52 @@ namespace Store
 
 
                 Console.WriteLine($"You have chosen:\nGame Title: {gameID.Title} \nPrice: ${gameID.Price}\n");
+               
+                orderTotal.Add(gameID);
                 
                 Console.WriteLine("add another game to your cart? (y/n)");
-                string answer = Console.ReadLine();
+                string answer = "";
+
+                try
+                {
+                    answer = Console.ReadLine();
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("You Must Enter Some Data!");
+                }
+
+                Orderline tCost = new Orderline();
+
+                tCost.ProductId = gameID.ProductId;
+                tCost.OrderId = nID;
+                tCost.Quantity = 1;
+                ctx.Orderline.Add(tCost);
+                ctx.SaveChanges();
+
+
+
+              
+               
                 while (answer.ToUpper() == "Y")
                 {
-                    int count = 1;
+                    Orderline totalCost = new Orderline();
+
+                    int count = 0;
+                    
                     Console.WriteLine("Choose GameID: ");
-                    int gameChoice2 = int.Parse(Console.ReadLine());
+                    int gameChoice2 = 0;
+
+                    try
+                    {
+                        gameChoice2 = int.Parse(Console.ReadLine());
+                    }
+                    catch (Exception)
+                    {
+
+                        Console.WriteLine("You Must Enter Some Data!");
+                    }
+
                     Console.WriteLine("\n");
                     var gameID2 = ctx.Games.FirstOrDefault(gChoice => gChoice.ProductId == gameChoice2);
                     orderTotal.Add(gameID2);
@@ -150,14 +228,31 @@ namespace Store
                     Console.WriteLine($"You have chosen:\nGame Title: {gameID2.Title} \nPrice: ${gameID2.Price}\n");
                     Console.WriteLine(count + " Games in your cart!\n");
 
+                     totalCost.ProductId = gameID2.ProductId;
+                    totalCost.OrderId = nID;
+                    totalCost.Quantity = 1;
+                    ctx.Orderline.Add(totalCost);
+                    ctx.SaveChanges();
+
                     Console.WriteLine("\nadd another game to your cart? (y/n)");
                     string answer2 = Console.ReadLine();
+                    try
+                    {
+
+                    }
+                    catch (Exception)
+                    {
+
+                        Console.WriteLine("You must choose something!");
+                    }
                     if (answer2.ToUpper() == "N")
                     {
 
                         break;
                     }
                     
+                   
+
                 }
 
 
@@ -176,16 +271,18 @@ namespace Store
 
                 if (uChoice.ToUpper() == "Y")
                 {
-                    DateTime orederTime = DateTime.Now;
+                    /*DateTime orederTime = DateTime.Now;
                     Orders order = new Orders()
                     {
+
+                        
                         StoreId = loc.StoreId,
                         CustomerId = cust.CustomerId,
                         Checkout = gameID.Price,
                         Time = DateTime.Now
                     };
                     ctx.Orders.Add(order);
-                    ctx.SaveChanges();
+                    ctx.SaveChanges();*/
 
                     Console.WriteLine("Thank you for your purchase!\n");
                     Thread.Sleep(1000);
@@ -196,12 +293,10 @@ namespace Store
                         Console.WriteLine($"Game: {item.Title}\nPrice: ${item.Price} \n");
                     }
 
-                    Console.Write("Your total comes out to: " );
+                    ctx.Entry(newOrder).Reload();
+                    Console.Write("Your total comes out to: " + newOrder.Checkout);
 
-                    foreach (var item in orderTotal)
-                    {
-                        /*item.Price*/
-                    }
+                    
 
                 }
 
@@ -214,7 +309,7 @@ namespace Store
 
                     Console.WriteLine("Ok, Well what would you like to do?");
                     Thread.Sleep(800);
-                    Console.WriteLine("1) Main Menu\t\t2) Purchase a Game");
+                    Console.WriteLine("1) Main Menu\t\t2) Compete Purchase\t\t");
                     int userChoice = int.Parse(Console.ReadLine());
 
                     switch (userChoice)
@@ -227,8 +322,26 @@ namespace Store
 
                         case 2:
                             Console.WriteLine("\n");
-                            placeOrders.buyGame(ctx, cust, loc);
+
+                            Console.WriteLine("Thank you for your purchase!\n");
+                            Thread.Sleep(1000);
+
+                            Console.WriteLine("Here is your order summary: \n");
+                            foreach (var item in orderTotal)
+                            {
+                                Console.WriteLine($"Game: {item.Title}\nPrice: ${item.Price} \n");
+                            }
+
+                            ctx.Entry(newOrder).Reload();
+                            Console.Write("Your total comes out to: " + newOrder.Checkout);
                             Thread.Sleep(600);
+                            Console.WriteLine("\n");
+                            promptUser.promtUserMenu(ctx, cust);
+                            break;
+                        default:
+                            Console.WriteLine($"{cust.FirstName} {cust.LastName} You must choose an option.");
+                            Thread.Sleep(600);
+
                             break;
                     }
 
@@ -245,7 +358,7 @@ namespace Store
             }
 
 
-            return;
+            return cust;
 
 
         }

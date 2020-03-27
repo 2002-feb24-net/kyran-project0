@@ -19,6 +19,7 @@ namespace Project_0.Lib.Entities
         public virtual DbSet<Games> Games { get; set; }
         public virtual DbSet<Inventory> Inventory { get; set; }
         public virtual DbSet<Locations> Locations { get; set; }
+        public virtual DbSet<Orderline> Orderline { get; set; }
         public virtual DbSet<Orders> Orders { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -115,6 +116,10 @@ namespace Project_0.Lib.Entities
             {
                 entity.ToTable("Inventory", "product");
 
+                entity.HasIndex(e => new { e.StoreId, e.ProductId })
+                    .HasName("UQ__Inventor__F0C23C8E6790328E")
+                    .IsUnique();
+
                 entity.Property(e => e.InventoryId).HasColumnName("InventoryID");
 
                 entity.Property(e => e.ProductId).HasColumnName("ProductID");
@@ -176,6 +181,31 @@ namespace Project_0.Lib.Entities
                     .HasColumnName("Zip_Code")
                     .HasMaxLength(5)
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<Orderline>(entity =>
+            {
+                entity.ToTable("Orderline", "sales");
+
+                entity.Property(e => e.OrderlineId).HasColumnName("orderlineID");
+
+                entity.Property(e => e.OrderId).HasColumnName("OrderID");
+
+                entity.Property(e => e.ProductId).HasColumnName("ProductID");
+
+                entity.Property(e => e.Quantity).HasDefaultValueSql("((1))");
+
+                entity.HasOne(d => d.Order)
+                    .WithMany(p => p.Orderline)
+                    .HasForeignKey(d => d.OrderId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Orderline_Orders");
+
+                entity.HasOne(d => d.Product)
+                    .WithMany(p => p.Orderline)
+                    .HasForeignKey(d => d.ProductId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Orderline_Games");
             });
 
             modelBuilder.Entity<Orders>(entity =>

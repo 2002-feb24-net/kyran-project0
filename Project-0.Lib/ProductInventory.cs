@@ -2,19 +2,26 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
 using Project_0.Lib.Entities;
 
 namespace Store
 {
     public static class ProductInventory 
     {
-        public static void storeInventory()
+        public static void storeInventory(Game_RealmContext ctx)
         {
-            var ctx = new Game_RealmContext();
+            var sInventory = from sales in ctx.Games
+                            join products in ctx.Inventory on sales.Title equals products.Title
+                            select (products);
+
+            var prodList = ctx.Inventory.Include("Store").ToList();
+
+
             List<Inventory> listOfGames = ctx.Inventory.ToList();
-            foreach (var item in listOfGames)
+            foreach (var item in prodList)
             {
-                Console.WriteLine("StoreID  " + item.StoreId  +"\nQuantity" + item.Quantity +"\n\n");
+                Console.WriteLine($"Store: {item.Store.StoreName}\tTitle: {item.Title}\tQuantity: {item.Quantity}\n");
             }
         }
     }

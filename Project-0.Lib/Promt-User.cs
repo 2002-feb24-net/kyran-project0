@@ -17,11 +17,19 @@ namespace Store
             Console.WriteLine("What would you like to do? \n");
             Thread.Sleep(800);
 
-            Console.WriteLine("\t1) New Customer\n" + "\t2) Search for Customer\n" + "\t3) Show Game Store Locations\n" + "\t4) Place An Order\n" + "\t5) List Of All Games\n" + "\t6) Quit?");
+            Console.WriteLine("\t1) New Customer\n" + "\t2) Search for Customer\n" + "\t3) Show Game Store Locations\n" + "\t4) Place An Order\n" + "\t5) List Of All Games\n" + "\t6) Show all Store Inventory\n" + "\t7) Quit?");
 
-            int uChoice = int.Parse(Console.ReadLine());
+            int uChoice = 0;
 
-            
+            try
+            {
+               uChoice = int.Parse(Console.ReadLine());
+            }
+            catch (Exception)
+            {
+
+                Console.WriteLine("Invalid entry, You must choose an option!");
+            }
                 switch (uChoice)
                 {
                 case 1:
@@ -65,18 +73,18 @@ namespace Store
                     promtUserMenu(ctx, cust);
                     break;
 
-                    case 6:
-                        System.Environment.Exit(0);
-                        break;
-
-                case 7:
-                    ProductInventory.storeInventory();
+                case 6:
+                    ProductInventory.storeInventory(ctx);
+                    Thread.Sleep(900);
                     promptUser.promtUserMenu(ctx, cust);
                     break;
 
+                case 7:
+                        System.Environment.Exit(0);
+                        break;
+
                     default:
                     Console.WriteLine("\n");
-                    Console.WriteLine("You must choose an option from the list!");
                         promtUserMenu(ctx, cust);
                         break;
                 }

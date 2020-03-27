@@ -5,6 +5,11 @@ namespace Project_0.Lib.Entities
 {
     public partial class Orders
     {
+        public Orders()
+        {
+            Orderline = new HashSet<Orderline>();
+        }
+
         public int OrderId { get; set; }
         public int StoreId { get; set; }
         public int CustomerId { get; set; }
@@ -13,5 +18,6 @@ namespace Project_0.Lib.Entities
 
         public virtual Customer Customer { get; set; }
         public virtual Locations Store { get; set; }
+        public virtual ICollection<Orderline> Orderline { get; set; }
     }
 }
