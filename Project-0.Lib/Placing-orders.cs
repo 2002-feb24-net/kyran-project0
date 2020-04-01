@@ -12,8 +12,6 @@ namespace Store
     {
         public static Customer buyGame(Game_RealmContext ctx, Customer cust, Locations loc)
         {
-           
-           
             var choice = "";
 
             try
@@ -37,10 +35,10 @@ namespace Store
                 Console.WriteLine("You must be a user to place orders!\n");
                 Thread.Sleep(800);
                 Console.WriteLine("Please Login or Create a new account!\n");
-                    //Dont allow purchase until confirmation that they are registered with us.
-                    promptUser.promtUserMenu(ctx, cust);
+                //Dont allow purchase until confirmation that they are registered with us.
+                promptUser.promtUserMenu(ctx, cust);
             }
-            else if(choice == "")
+            else if (choice == "")
             {
                 Console.WriteLine("You Must Enter something !\n");
                 Thread.Sleep(800);
@@ -57,8 +55,10 @@ namespace Store
                 promptUser.promtUserMenu(ctx, cust);
             }
 
-            
-            
+
+
+
+
 
             Console.WriteLine("Which store location would you like to purchase your game from?\n");
             Thread.Sleep(800);
@@ -76,26 +76,7 @@ namespace Store
 
 
             int uInput = 0;
-            while (true)
-            {
-                try
-                {
-                   uInput = int.Parse(Console.ReadLine());
-                    if(ctx.Locations.Find(uInput) != null)
-                    break; 
-                    else
-                    {
-                        Console.WriteLine("You Must Enter the correct Store ID: ");
-                    }
-                }
-                catch (Exception)
-                {
-
-                    Console.WriteLine("incorrect input, enter valid location ID!");
-
-
-                }
-            }
+            uInput = SelectStore(ctx,uInput);
 
             Orders newOrder = new Orders();
             newOrder.Checkout = 0;
@@ -380,7 +361,30 @@ namespace Store
 
 
         }
+        public static int SelectStore(Game_RealmContext ctx, int uInput)
+        {
+            while (true)
+            {
+                try
+                {
+                    uInput = int.Parse(Console.ReadLine());
+                    if (ctx.Locations.Find(uInput) != null)
+                        break;
+                    else
+                    {
+                        Console.WriteLine("You Must Enter the correct Store ID: ");
+                    }
+                }
+                catch (Exception)
+                {
 
+                    Console.WriteLine("incorrect input, enter valid location ID!");
+
+
+                }
+            }
+            return uInput;
+        }
         public void gameInventory()
         {
             var ctx = new Game_RealmContext();
